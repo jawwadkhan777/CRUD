@@ -4,25 +4,20 @@ const mysql = require('mysql');
 require('dotenv').config();
 const app = express()
 
-
+//using express framework of node js for backend
 app.use(express.json());
 
 app.use(cors());
 
-
+//create connection with mysql database
 const connection = mysql.createConnection({
   host: 'localhost',
   user: `${process.env.MYSQL_USER}`,
   password: `${process.env.MYSQL_PASSWORD}`,
-  // user: 'root',
-  // password: 'MySQL_777',
   database: 'employee_database'
 })
 
-console.log(process.env.MYSQL_USER);
-console.log(process.env.MYSQL_PASSWORD);
-
-
+//read the data from database
 app.get('/', (req, res)=> {
   let sql = 'Select * FROM employee_info';
   connection.query(sql, (err, results)=> {
@@ -31,6 +26,7 @@ app.get('/', (req, res)=> {
   })
 })
 
+//create the data into database
 app.post('/', (req, res)=> {
   let sql = 'INSERT INTO employee_info (employee_name, job_title, employee_email) VALUES (?)';
   const values = [
@@ -44,6 +40,7 @@ app.post('/', (req, res)=> {
   })
 })
 
+//update the data into database
 app.put('/:id', (req, res) => {
   let sql = "UPDATE employee_info SET employee_name = ?, job_title = ?, employee_email = ? WHERE id = ?";
   const values = [
@@ -61,6 +58,7 @@ app.put('/:id', (req, res) => {
   });
 });
 
+//delete the data from database
 app.delete('/employee_info/:id', (req, res)=> {
   let sql = 'DELETE FROM employee_info WHERE id = ?';
   const id = req.params.id;
@@ -70,7 +68,8 @@ app.delete('/employee_info/:id', (req, res)=> {
     res.send(results);
   })
 })
- 
+
+//listening
 app.listen(8081, ()=> {
   console.log('CORS-enabled web server listening on port 8081')
   connection.connect((err)=> {
